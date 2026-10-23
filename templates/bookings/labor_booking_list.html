@@ -1,0 +1,195 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Customer Bookings - LaborConnect{% endblock %}
+
+{% block content %}
+
+<div class="bookings-page labor-bookings-page">
+
+    <div class="page-heading">
+        <h2>Customer Bookings</h2>
+        <p>Review customer requests and manage your work.</p>
+    </div>
+
+    {% if bookings %}
+
+        <div class="booking-list">
+
+            {% for booking in bookings %}
+
+                <article class="booking-card labor-booking-card">
+
+                    <div class="booking-card-header">
+
+                        <div>
+                            <span class="booking-reference">BOOKING</span>
+                            <h3>#{{ booking.id }}</h3>
+                        </div>
+
+                        {% if booking.status == 'PENDING' %}
+                            <span class="status status-pending">Pending</span>
+                        {% elif booking.status == 'ACCEPTED' %}
+                            <span class="status status-accepted">Accepted</span>
+                        {% elif booking.status == 'IN_PROGRESS' %}
+                            <span class="status status-progress">Work in Progress</span>
+                        {% elif booking.status == 'COMPLETED' %}
+                            <span class="status status-completed">Completed</span>
+                        {% elif booking.status == 'REJECTED' %}
+                            <span class="status status-rejected">Rejected</span>
+                        {% elif booking.status == 'CANCELLED' %}
+                            <span class="status status-cancelled">Cancelled</span>
+                        {% else %}
+                            <span class="status">{{ booking.status }}</span>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="labor-booking-information">
+
+                        <div class="labor-booking-info-item">
+                            <span>Customer</span>
+                            <strong>{{ booking.customer.username }}</strong>
+                        </div>
+
+                        {% if booking.customer.email %}
+                            <div class="labor-booking-info-item">
+                                <span>Email</span>
+                                <strong>{{ booking.customer.email }}</strong>
+                            </div>
+                        {% endif %}
+
+                        <div class="labor-booking-info-item">
+                            <span>Service</span>
+                            <strong>{{ booking.service.name }}</strong>
+                        </div>
+
+                        <div class="labor-booking-info-item">
+                            <span>Date</span>
+                            <strong>{{ booking.booking_date }}</strong>
+                        </div>
+
+                        <div class="labor-booking-info-item">
+                            <span>Time</span>
+                            <strong>{{ booking.booking_time }}</strong>
+                        </div>
+
+                        <div class="labor-booking-info-item">
+                            <span>Service Price</span>
+                            <strong class="labor-booking-price">
+                                ₹{{ booking.service.price }}
+                            </strong>
+                        </div>
+
+                        <div class="labor-booking-info-item labor-booking-address">
+                            <span>Service Address</span>
+                            <strong>{{ booking.address }}</strong>
+                        </div>
+
+                    </div>
+
+                    {% if booking.notes %}
+                        <div class="labor-booking-notes">
+                            <strong>Customer Notes</strong>
+                            <p>{{ booking.notes }}</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="booking-actions labor-booking-actions">
+
+                        <a href="/bookings/detail/{{ booking.id }}/"
+                           class="view-booking-button">
+                            View Details
+                        </a>
+
+                        {% if booking.directions_url %}
+                            <a href="{{ booking.directions_url }}"
+                               class="map-directions-button"
+                               target="_blank"
+                               rel="noopener">
+                                🧭 Directions
+                            </a>
+                        {% endif %}
+
+                        {% if booking.status == 'PENDING' %}
+
+                            <form method="POST"
+                                  action="/bookings/accept/{{ booking.id }}/">
+                                {% csrf_token %}
+                                <button type="submit" class="accept-booking-button">
+                                    Accept Booking
+                                </button>
+                            </form>
+
+                            <form method="POST"
+                                  action="/bookings/reject/{{ booking.id }}/">
+                                {% csrf_token %}
+                                <button type="submit" class="cancel-booking-button">
+                                    Reject Booking
+                                </button>
+                            </form>
+
+                        {% elif booking.status == 'ACCEPTED' %}
+
+                            <form method="POST"
+                                  action="/bookings/start/{{ booking.id }}/">
+                                {% csrf_token %}
+                                <button type="submit" class="start-work-button">
+                                    Start Work
+                                </button>
+                            </form>
+
+                        {% elif booking.status == 'IN_PROGRESS' %}
+
+                            <form method="POST"
+                                  action="/bookings/complete/{{ booking.id }}/">
+                                {% csrf_token %}
+                                <button type="submit" class="complete-work-button">
+                                    Complete Work
+                                </button>
+                            </form>
+
+                        {% elif booking.status == 'COMPLETED' %}
+
+                            <span class="review-submitted">
+                                ✓ Work Completed
+                            </span>
+
+                        {% elif booking.status == 'REJECTED' %}
+
+                            <span class="status status-rejected">
+                                Booking Rejected
+                            </span>
+
+                        {% elif booking.status == 'CANCELLED' %}
+
+                            <span class="status status-cancelled">
+                                Booking Cancelled
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="no-bookings">
+            <h3>No Customer Bookings Yet</h3>
+            <p>New booking requests from customers will appear here.</p>
+
+            <a href="/labor/dashboard/" class="view-booking-button">
+                Back to Labor Dashboard
+            </a>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

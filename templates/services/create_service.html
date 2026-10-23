@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Add Service - LaborConnect
+{% endblock %}
+
+{% block content %}
+
+<div class="create-service-page">
+
+    <div class="page-heading">
+        <h2>Add a Service</h2>
+        <p>
+            Add the service you provide so customers can find
+            and book you.
+        </p>
+    </div>
+
+    <div class="create-service-card">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button
+                type="submit"
+                class="save-service-button"
+            >
+                Create Service
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="service-back">
+
+        <a
+            href="/labor/dashboard/"
+            class="back-button"
+        >
+            ← Back to Labor Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

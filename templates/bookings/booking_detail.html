@@ -1,0 +1,245 @@
+
+{% extends 'base.html' %}
+{% load translate_text %}
+
+{% block title %}Booking #{{ booking.id }} - LaborConnect{% endblock %}
+
+{% block content %}
+
+<div class="booking-detail-page professional-booking-detail">
+
+    <div class="page-heading">
+        <h2>Booking Details</h2>
+        <p>Review your booking, service, schedule, and customer information.</p>
+    </div>
+
+    <div class="booking-detail-header">
+
+        <div>
+            <span class="booking-reference">BOOKING REFERENCE</span>
+            <h3>Booking #{{ booking.id }}</h3>
+            <p>Current Status: <strong>{{ booking.get_status_display }}</strong></p>
+        </div>
+
+        {% if booking.status == 'PENDING' %}
+            <span class="status status-pending">Pending</span>
+        {% elif booking.status == 'ACCEPTED' %}
+            <span class="status status-accepted">Accepted</span>
+        {% elif booking.status == 'IN_PROGRESS' %}
+            <span class="status status-progress">Work in Progress</span>
+        {% elif booking.status == 'COMPLETED' %}
+            <span class="status status-completed">Completed</span>
+        {% elif booking.status == 'REJECTED' %}
+            <span class="status status-rejected">Rejected</span>
+        {% elif booking.status == 'CANCELLED' %}
+            <span class="status status-cancelled">Cancelled</span>
+        {% endif %}
+
+    </div>
+
+    <section class="detail-section">
+        <h3>👷 Laborer Information</h3>
+
+        <div class="detail-grid">
+            <div>
+                <strong>Name</strong>
+                <p>{{ booking.labor.full_name }}</p>
+            </div>
+
+            <div>
+                <strong>Location</strong>
+                <p>{{ booking.labor.location }}</p>
+            </div>
+
+            <div>
+                <strong>Skills</strong>
+                <p>{{ booking.labor.skills }}</p>
+            </div>
+
+            <div>
+                <strong>Hourly Rate</strong>
+                <p>₹{{ booking.labor.hourly_rate }}</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="detail-section">
+        <h3>🔧 Service Information</h3>
+
+        <div class="detail-grid">
+            <div>
+                <strong>Service</strong>
+                <p>{{ booking.service.name }}</p>
+            </div>
+
+            <div>
+                <strong>Price</strong>
+                <p class="booking-detail-price">₹{{ booking.service.price }}</p>
+            </div>
+        </div>
+
+        {% if booking.service.description %}
+            <div class="detail-description">
+                <strong>Description</strong>
+                <p>{{ booking.service.description }}</p>
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="detail-section">
+        <h3>📅 Schedule and Address</h3>
+
+        <div class="detail-grid">
+            <div>
+                <strong>Date</strong>
+                <p>{{ booking.booking_date }}</p>
+            </div>
+
+            <div>
+                <strong>Time</strong>
+                <p>{{ booking.booking_time }}</p>
+            </div>
+        </div>
+
+        <div class="detail-description">
+            <strong>Service Address</strong>
+            <p>{{ booking.address }}</p>
+        </div>
+
+        {% if booking.notes %}
+            <div class="detail-description">
+                <strong>Customer Notes</strong>
+                <p>{{ booking.notes }}</p>
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="detail-section">
+        <h3>📍 {% tr "Service Location" %}</h3>
+
+        {% if map_markers and GOOGLE_MAPS_API_KEY %}
+            <div id="view-map"
+                 class="map-box"
+                 data-label-customer="{% tr 'Service Location' %}"></div>
+            {{ map_markers|json_script:"map-markers" }}
+        {% endif %}
+
+        {% if directions_url %}
+            <a href="{{ directions_url }}"
+               class="map-directions-button"
+               target="_blank"
+               rel="noopener">
+                🧭 {% if viewer_is_labor %}{% tr "Directions to customer" %}{% else %}{% tr "Directions to laborer" %}{% endif %}
+            </a>
+        {% endif %}
+    </section>
+
+    <section class="detail-section">
+        <h3>👤 Customer Information</h3>
+
+        <div class="detail-grid">
+            <div>
+                <strong>Username</strong>
+                <p>{{ booking.customer.username }}</p>
+            </div>
+
+            {% if booking.customer.email %}
+                <div>
+                    <strong>Email</strong>
+                    <p>{{ booking.customer.email }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <div class="detail-actions">
+
+        {% if booking.status == 'PENDING' %}
+
+            {% if booking.customer == user %}
+                <form method="POST" action="/bookings/cancel/{{ booking.id }}/">
+                    {% csrf_token %}
+                    <button type="submit" class="cancel-booking-button">
+                        Cancel Booking
+                    </button>
+                </form>
+
+            {% elif booking.labor.user == user %}
+                <form method="POST" action="/bookings/accept/{{ booking.id }}/">
+                    {% csrf_token %}
+                    <button type="submit" class="accept-booking-button">
+                        Accept Booking
+                    </button>
+                </form>
+
+                <form method="POST" action="/bookings/reject/{{ booking.id }}/">
+                    {% csrf_token %}
+                    <button type="submit" class="cancel-booking-button">
+                        Reject Booking
+                    </button>
+                </form>
+            {% endif %}
+
+        {% elif booking.status == 'ACCEPTED' %}
+
+            {% if booking.labor.user == user %}
+                <form method="POST" action="/bookings/start/{{ booking.id }}/">
+                    {% csrf_token %}
+                    <button type="submit" class="start-work-button">
+                        Start Work
+                    </button>
+                </form>
+            {% endif %}
+
+        {% elif booking.status == 'IN_PROGRESS' %}
+
+            {% if booking.labor.user == user %}
+                <form method="POST" action="/bookings/complete/{{ booking.id }}/">
+                    {% csrf_token %}
+                    <button type="submit" class="complete-work-button">
+                        Complete Work
+                    </button>
+                </form>
+            {% endif %}
+
+        {% elif booking.status == 'COMPLETED' %}
+
+            <span class="review-submitted">✓ Work Completed</span>
+
+            {% if booking.customer == user %}
+                {% if booking.review %}
+                    <span class="review-submitted">✓ Review Submitted</span>
+                {% else %}
+                    <a href="/reviews/create/{{ booking.id }}/" class="review-button">
+                        ⭐ Write Review
+                    </a>
+                {% endif %}
+            {% endif %}
+
+        {% endif %}
+
+    </div>
+
+    <div class="booking-back">
+        {% if booking.customer == user %}
+            <a href="/bookings/my-bookings/" class="back-button">
+                ← Back to My Bookings
+            </a>
+        {% elif booking.labor.user == user %}
+            <a href="/bookings/labor-bookings/" class="back-button">
+                ← Back to Customer Bookings
+            </a>
+        {% else %}
+            <a href="/" class="back-button">← Back to Home</a>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{% if map_markers and GOOGLE_MAPS_API_KEY %}
+    {% include "partials/view_map_js.html" %}
+{% endif %}
+{% endblock %}

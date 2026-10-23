@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}My Services - LaborConnect{% endblock %}
+
+{% block content %}
+
+<div class="service-list-page">
+
+    <div class="page-heading">
+        <h2>My Services</h2>
+        <p>Manage the services you provide to customers.</p>
+    </div>
+
+    <div class="service-list-actions">
+        <a href="/services/create/" class="primary-button">
+            + Add New Service
+        </a>
+
+        <a href="/labor/dashboard/" class="secondary-button">
+            ← Labor Dashboard
+        </a>
+    </div>
+
+    <hr>
+
+    {% if services %}
+
+        <div class="service-management-grid">
+
+            {% for service in services %}
+
+                <div class="service-management-card">
+
+                    <div class="service-card-header">
+
+                        <h3>{{ service.name }}</h3>
+
+                        {% if service.is_available %}
+                            <span class="available-badge">
+                                Available
+                            </span>
+                        {% else %}
+                            <span class="unavailable-badge">
+                                Not Available
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="service-card-body">
+
+                        {% if service.description %}
+                            <p>
+                                {{ service.description }}
+                            </p>
+                        {% else %}
+                            <p class="no-description">
+                                No description added.
+                            </p>
+                        {% endif %}
+
+                        <div class="service-price-box">
+                            <strong>₹{{ service.price }}</strong>
+                            <span>Service Price</span>
+                        </div>
+
+                        <div class="service-card-actions">
+
+    <a
+        href="/services/edit/{{ service.id }}/"
+        class="edit-service-button"
+    >
+        ✏️ Edit Service
+    </a>
+
+    <a
+        href="/services/delete/{{ service.id }}/"
+        class="delete-service-button"
+    >
+    <br>
+    <br>
+        🗑️ Delete Service
+    </a>
+
+</div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="no-services">
+
+            <h3>No Services Added Yet</h3>
+
+            <p>
+                You have not added any services.
+                Add your first service so customers can book you.
+            </p>
+
+            <a href="/services/create/" class="primary-button">
+                + Add Your First Service
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

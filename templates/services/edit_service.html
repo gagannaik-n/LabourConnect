@@ -1,0 +1,44 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Edit Service - LaborConnect{% endblock %}
+
+{% block content %}
+
+<div class="edit-service-page">
+
+    <div class="page-heading">
+        <h2>Edit Your Service</h2>
+        <p>Update your service details and pricing below.</p>
+    </div>
+
+    <div class="edit-service-card">
+
+        <div class="edit-service-intro">
+            <h3>Service Information</h3>
+            <p>Make sure your service details are accurate.</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <div class="edit-service-actions">
+
+                <button type="submit" class="save-service-button">
+                    Save Changes
+                </button>
+
+                <a href="/services/list/" class="cancel-edit-button">
+                    Cancel
+                </a>
+
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

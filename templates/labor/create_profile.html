@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load translate_text %}
+
+{% block title %}
+{% if editing %}Edit{% else %}Create{% endif %} Labor Profile - LaborConnect
+{% endblock %}
+
+{% block content %}
+
+<div class="create-labor-profile-page">
+
+    <div class="page-heading">
+        <h2>{% if editing %}Edit Labor Profile{% else %}Create Labor Profile{% endif %}</h2>
+        <p>
+            Complete your profile so customers can find you
+            and book your services.
+            Pin your location so customers near you can find you.
+        </p>
+    </div>
+
+    <div class="labor-profile-form-card">
+
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            {% include "partials/location_picker.html" with kind="labor" %}
+
+            <button
+                type="submit"
+                class="save-labor-profile-button"
+            >
+                {% if editing %}Save Changes{% else %}Create Profile{% endif %}
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="profile-back">
+
+        <a
+            href="/"
+            class="back-button"
+        >
+            ← Back to Home
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+{% include "partials/location_picker_js.html" %}
+{% endblock %}

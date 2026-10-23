@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Write Review - LaborConnect
+{% endblock %}
+
+{% block content %}
+
+<div class="review-page">
+
+    <div class="page-heading">
+        <h2>Write a Review</h2>
+        <p>Share your experience with the laborer.</p>
+    </div>
+
+    <div class="review-card">
+
+        <div class="review-booking-info">
+
+            <h3>Booking #{{ booking.id }}</h3>
+
+            <p>
+                <strong>Laborer:</strong>
+                {{ booking.labor.full_name }}
+            </p>
+
+            <p>
+                <strong>Service:</strong>
+                {{ booking.service.name }}
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                <span class="status status-completed">
+                    Completed
+                </span>
+            </p>
+
+        </div>
+
+        <hr>
+
+        {% if error %}
+
+            <div class="review-error">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <label for="rating">
+                Rating
+            </label>
+
+            <select
+                name="rating"
+                id="rating"
+                required
+            >
+                <option value="">
+                    Select Rating
+                </option>
+
+                <option value="5">
+                    ⭐⭐⭐⭐⭐ 5 - Excellent
+                </option>
+
+                <option value="4">
+                    ⭐⭐⭐⭐ 4 - Very Good
+                </option>
+
+                <option value="3">
+                    ⭐⭐⭐ 3 - Good
+                </option>
+
+                <option value="2">
+                    ⭐⭐ 2 - Average
+                </option>
+
+                <option value="1">
+                    ⭐ 1 - Poor
+                </option>
+
+            </select>
+
+            <label for="comment">
+                Your Comment
+            </label>
+
+            <textarea
+                name="comment"
+                id="comment"
+                rows="5"
+                placeholder="Write your experience..."
+            ></textarea>
+
+            <button
+                type="submit"
+                class="submit-review-button"
+            >
+                ⭐ Submit Review
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="review-back">
+
+        <a
+            href="/bookings/my-bookings/"
+            class="back-button"
+        >
+            ← Back to My Bookings
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

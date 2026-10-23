@@ -1,0 +1,39 @@
+{% load translate_text %}
+<div class="map-picker">
+
+    <label>
+        {% if kind == 'booking' %}
+            {% tr "Pin the service location on the map" %}
+        {% else %}
+            {% tr "Pin your exact location on the map" %}
+        {% endif %}
+    </label>
+
+    {% if GOOGLE_MAPS_API_KEY %}
+
+        <button type="button" id="use-my-location" class="map-gps-button">
+            📍 {% tr "Use my current location" %}
+        </button>
+
+        <div id="location-map"
+             class="map-box"
+             data-lat-input="id_latitude"
+             data-lng-input="id_longitude"
+             data-msg-saved="{% tr 'Location saved. You can drag the pin to adjust it.' %}"
+             data-msg-locating="{% tr 'Getting your location...' %}"
+             data-msg-denied="{% tr 'Could not get your location. Please allow location access or tap on the map.' %}"
+             data-msg-unsupported="{% tr 'Your browser does not support location.' %}"></div>
+
+        <p id="location-status" class="map-hint">
+            {% tr "Tap on the map or drag the pin to set the location." %}
+        </p>
+
+    {% else %}
+
+        <p class="map-hint">
+            {% tr "Google Maps is not set up yet. Add GOOGLE_MAPS_API_KEY in settings." %}
+        </p>
+
+    {% endif %}
+
+</div>

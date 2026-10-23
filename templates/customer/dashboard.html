@@ -1,0 +1,168 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Customer Dashboard - LaborConnect{% endblock %}
+
+{% block content %}
+
+<div class="customer-dashboard">
+
+    <div class="customer-dashboard-welcome">
+        <h2>Customer Dashboard</h2>
+        <p>Welcome back, <strong>{{ user.username }}</strong>!</p>
+        <p>Find skilled workers and manage your bookings in one place.</p>
+    </div>
+
+    <section class="customer-dashboard-section">
+        <h3>Booking Summary</h3>
+
+        <div class="customer-stats-grid">
+
+            <div class="customer-stat-card">
+                <span>Total Bookings</span>
+                <strong>{{ total_bookings }}</strong>
+            </div>
+
+            <div class="customer-stat-card customer-pending-stat">
+                <span>Pending Bookings</span>
+                <strong>{{ pending_bookings }}</strong>
+            </div>
+
+            <div class="customer-stat-card customer-completed-stat">
+                <span>Completed Bookings</span>
+                <strong>{{ completed_bookings }}</strong>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="customer-dashboard-section">
+        <h3>My Profile</h3>
+
+        {% if profile %}
+            <div class="customer-dashboard-profile">
+
+                <div class="customer-dashboard-profile-item">
+                    <strong>Full Name</strong>
+                    <span>{{ profile.full_name }}</span>
+                </div>
+
+                <div class="customer-dashboard-profile-item">
+                    <strong>Location</strong>
+                    <span>{{ profile.location }}</span>
+                </div>
+
+                <a href="/customer/my-profile/"
+                   class="customer-dashboard-primary-button">
+                    View My Profile
+                </a>
+
+            </div>
+        {% else %}
+            <div class="customer-dashboard-empty">
+                <h4>Complete Your Profile</h4>
+                <p>Create your customer profile to get started.</p>
+                <a href="/customer/create-profile/"
+                   class="customer-dashboard-primary-button">
+                    Create Customer Profile
+                </a>
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="customer-dashboard-section">
+        <h3>Recent Bookings</h3>
+
+        {% if recent_bookings %}
+            <div class="customer-booking-list">
+
+                {% for booking in recent_bookings %}
+                    <div class="customer-booking-card">
+
+                        <div class="customer-booking-header">
+                            <h4>Booking #{{ booking.id }}</h4>
+
+                            <span class="customer-booking-status status-{{ booking.status|lower }}">
+                                {{ booking.get_status_display|default:booking.status }}
+                            </span>
+                        </div>
+
+                        <div class="customer-booking-details">
+                            <p>
+                                <strong>Laborer:</strong>
+                                {{ booking.labor.full_name }}
+                            </p>
+
+                            <p>
+                                <strong>Service:</strong>
+                                {{ booking.service.name }}
+                            </p>
+
+                            <p>
+                                <strong>Date:</strong>
+                                {{ booking.booking_date }}
+                            </p>
+
+                            <p>
+                                <strong>Time:</strong>
+                                {{ booking.booking_time }}
+                            </p>
+
+                            <p>
+                                <strong>Price:</strong>
+                                ₹{{ booking.service.price }}
+                            </p>
+                        </div>
+
+                        <a href="/bookings/detail/{{ booking.id }}/"
+                           class="customer-dashboard-view-button">
+                            View Booking Details
+                        </a>
+
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% else %}
+            <div class="customer-dashboard-empty">
+                <h4>No Bookings Yet</h4>
+                <p>Find a skilled laborer for your next task.</p>
+                <a href="/labor/list/"
+                   class="customer-dashboard-primary-button">
+                    Find a Laborer
+                </a>
+            </div>
+        {% endif %}
+
+        <a href="/bookings/my-bookings/"
+           class="customer-dashboard-secondary-button">
+            View All My Bookings
+        </a>
+    </section>
+
+    <section class="customer-dashboard-section">
+        <h3>Quick Actions</h3>
+
+        <div class="customer-actions-grid">
+
+            <a href="/labor/list/" class="customer-action-card">
+                <strong>Find Laborers</strong>
+                <span>Browse available workers and their services.</span>
+            </a>
+
+            <a href="/bookings/my-bookings/" class="customer-action-card">
+                <strong>My Bookings</strong>
+                <span>Check your booking details and status.</span>
+            </a>
+
+            <a href="/customer/my-profile/" class="customer-action-card">
+                <strong>My Profile</strong>
+                <span>View your customer profile information.</span>
+            </a>
+
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}

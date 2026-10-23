@@ -1,0 +1,180 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Labor Dashboard - LaborConnect{% endblock %}
+
+{% block content %}
+
+<div class="labor-dashboard">
+
+    <div class="dashboard-welcome">
+        <div>
+            <h2>Labor Dashboard</h2>
+            <p>Welcome back, <strong>{{ user.username }}</strong>!</p>
+            <p>Manage your bookings, services, and labor profile.</p>
+        </div>
+    </div>
+
+    <section class="dashboard-section">
+        <h3>Booking Summary</h3>
+
+        <div class="dashboard-stats">
+
+            <div class="dashboard-stat-card">
+                <span>Total Bookings</span>
+                <strong>{{ total_bookings }}</strong>
+            </div>
+
+            <div class="dashboard-stat-card pending-stat">
+                <span>Pending</span>
+                <strong>{{ pending_bookings }}</strong>
+            </div>
+
+            <div class="dashboard-stat-card accepted-stat">
+                <span>Accepted</span>
+                <strong>{{ accepted_bookings }}</strong>
+            </div>
+
+            <div class="dashboard-stat-card completed-stat">
+                <span>Completed</span>
+                <strong>{{ completed_bookings }}</strong>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="dashboard-section">
+        <h3>My Labor Profile</h3>
+
+        <div class="dashboard-profile-card">
+            <div class="dashboard-profile-item">
+                <strong>Name</strong>
+                <span>{{ profile.full_name }}</span>
+            </div>
+
+            <div class="dashboard-profile-item">
+                <strong>Skills</strong>
+                <span>{{ profile.skills }}</span>
+            </div>
+
+            <div class="dashboard-profile-item">
+                <strong>Location</strong>
+                <span>{{ profile.location }}</span>
+            </div>
+
+            <div class="dashboard-profile-item">
+                <strong>Hourly Rate</strong>
+                <span>₹{{ profile.hourly_rate }}</span>
+            </div>
+
+            <div class="dashboard-profile-item">
+                <strong>Availability</strong>
+                {% if profile.is_available %}
+                    <span class="dashboard-available">Available</span>
+                {% else %}
+                    <span class="dashboard-unavailable">Not Available</span>
+                {% endif %}
+            </div>
+
+            <a href="/labor/my-profile/" class="dashboard-primary-button">
+                View My Profile
+            </a>
+        </div>
+    </section>
+
+    <section class="dashboard-section">
+        <h3>Recent Customer Bookings</h3>
+
+        {% if bookings %}
+            <div class="dashboard-booking-list">
+
+                {% for booking in bookings|slice:":5" %}
+                    <div class="dashboard-booking-card">
+
+                        <div class="dashboard-booking-header">
+                            <h4>Booking #{{ booking.id }}</h4>
+
+                            <span class="dashboard-booking-status status-{{ booking.status|lower }}">
+                                {{ booking.get_status_display|default:booking.status }}
+                            </span>
+                        </div>
+
+                        <div class="dashboard-booking-details">
+                            <p>
+                                <strong>Customer:</strong>
+                                {{ booking.customer.username }}
+                            </p>
+
+                            <p>
+                                <strong>Service:</strong>
+                                {{ booking.service.name }}
+                            </p>
+
+                            <p>
+                                <strong>Date:</strong>
+                                {{ booking.booking_date }}
+                            </p>
+
+                            <p>
+                                <strong>Time:</strong>
+                                {{ booking.booking_time }}
+                            </p>
+
+                            <p>
+                                <strong>Price:</strong>
+                                ₹{{ booking.service.price }}
+                            </p>
+                        </div>
+
+                        <a href="/bookings/detail/{{ booking.id }}/"
+                           class="dashboard-view-button">
+                            View Booking Details
+                        </a>
+
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% else %}
+            <div class="dashboard-empty-state">
+                <h4>No Customer Bookings Yet</h4>
+                <p>New customer bookings will appear here.</p>
+            </div>
+        {% endif %}
+
+        <a href="/bookings/labor-bookings/" class="dashboard-secondary-button">
+            View All Customer Bookings
+        </a>
+    </section>
+
+    <section class="dashboard-section">
+        <h3>Quick Actions</h3>
+
+        <div class="dashboard-actions-grid">
+
+            <a href="/services/create/" class="dashboard-action-card">
+                <strong>Add Service</strong>
+                <span>Create a new service offering.</span>
+            </a>
+
+            <a href="/services/list/" class="dashboard-action-card">
+                <strong>Manage My Services</strong>
+                <span>Edit or delete your existing services.</span>
+            </a>
+
+            <a href="/labor/my-profile/" class="dashboard-action-card">
+                <strong>My Labor Profile</strong>
+                <span>View your professional profile.</span>
+            </a>
+
+            <a href="/labor/list/" class="dashboard-action-card">
+                <strong>View Labor Listings</strong>
+                <span>Browse the available labor listings.</span>
+            </a>
+
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}

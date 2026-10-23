@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% load translate_text static l10n %}
+
+{% block title %}
+{% tr "Find Laborers" %} - LaborConnect
+{% endblock %}
+
+{% block content %}
+
+<section class="labor-list-page">
+
+    <div class="page-heading">
+        <h2>{% tr "Find Skilled Laborers" %}</h2>
+        <p>{% tr "Search and find the right professional for your work." %}</p>
+    </div>
+
+    <!-- SEARCH -->
+
+    <form method="GET" class="labor-search-form">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="{% tr 'Search by name, skill or location' %}"
+        >
+
+        <button type="submit">
+            {% tr "Search" %}
+        </button>
+
+    </form>
+
+    {% if search %}
+        <p class="search-result-text">
+            {% tr "Search results for:" %}
+            <strong>{{ search }}</strong>
+        </p>
+    {% endif %}
+
+    <hr>
+
+    <!-- NEAR ME + MAP -->
+
+    <div id="labor-page-msgs" hidden
+         data-away="{% tr 'km away' %}"
+         data-found="{% tr 'found nearby' %}"
+         data-locating="{% tr 'Getting your location...' %}"
+         data-denied="{% tr 'Could not get your location. Please allow location access or tap on the map.' %}"
+         data-unsupported="{% tr 'Your browser does not support location.' %}"
+         data-you="{% tr 'You are here' %}"
+         data-profile="{% tr 'View Profile' %}"
+         data-directions="{% tr 'Get Directions' %}"
+         data-hour="{% tr 'hour' %}"></div>
+
+    {% if laborers %}
+
+        <div class="nearby-bar">
+
+            <button type="button" id="find-nearby" class="map-gps-button">
+                📍 {% tr "Find laborers near me" %}
+            </button>
+
+            <label class="nearby-radius">
+                {% tr "Within" %}
+                <select id="radius-select">
+                    <option value="0">{% tr "Any distance" %}</option>
+                    <option value="5">5 km</option>
+                    <option value="10">10 km</option>
+                    <option value="25">25 km</option>
+                    <option value="50">50 km</option>
+                </select>
+            </label>
+
+            <span id="nearby-status" class="map-hint"></span>
+
+        </div>
+
+        {% if GOOGLE_MAPS_API_KEY %}
+            <div id="labor-map" class="map-box"></div>
+        {% endif %}
+
+    {% endif %}
+
+    <!-- LABOR CARDS -->
+
+    {% if laborers %}
+
+        <div class="labor-grid">
+
+            {% for labor in laborers %}
+
+                <div class="labor-card"
+                     data-name="{{ labor.full_name }}"
+                     data-price="{{ labor.hourly_rate }}"
+                     data-url="/labor/{{ labor.id }}/"
+                     data-directions="{{ labor.directions_url }}"
+                     {% if labor.has_coordinates %}
+                     data-lat="{{ labor.latitude|unlocalize }}"
+                     data-lng="{{ labor.longitude|unlocalize }}"
+                     {% endif %}>
+
+                    <!-- PROFILE PHOTO -->
+
+                    <div class="labor-photo">
+
+                        {% if labor.profile_photo %}
+
+                            <img
+                                src="{{ labor.profile_photo.url }}"
+                                alt="{{ labor.full_name }}"
+                            >
+
+                        {% else %}
+
+                            <div class="default-profile">👤</div>
+
+                        {% endif %}
+
+                    </div>
+
+                    <!-- LABOR INFORMATION -->
+
+                    <div class="labor-info">
+
+                        <h3>{{ labor.full_name }}</h3>
+
+                        <p class="labor-skills">
+                            <strong>{% tr "Skills:" %}</strong>
+                            {{ labor.skills }}
+                        </p>
+
+                        <p>
+                            <strong>{% tr "Experience:" %}</strong>
+                            {{ labor.experience_years }}
+                            {% tr "years" %}
+                        </p>
+
+                        <p>
+                            <strong>{% tr "Location:" %}</strong>
+                            {{ labor.location }}
+                        </p>
+
+                        <p class="labor-distance">
+                            {% if not labor.has_coordinates %}
+                                <small>{% tr "No map location" %}</small>
+                            {% endif %}
+                        </p>
+
+                        <p class="labor-price">
+                            <strong>₹{{ labor.hourly_rate }}</strong>
+                            / {% tr "hour" %}
+                        </p>
+
+                        <p class="labor-rating">
+                            <strong>{% tr "Rating:" %}</strong>
+
+                            {% if labor.average_rating %}
+                                ⭐ {{ labor.average_rating|floatformat:1 }}/5
+                            {% else %}
+                                {% tr "No reviews yet" %}
+                            {% endif %}
+                        </p>
+
+                        {% if labor.is_available %}
+
+                            <span class="available-badge">
+                                {% tr "Available" %}
+                            </span>
+
+                        {% else %}
+
+                            <span class="unavailable-badge">
+                                {% tr "Not Available" %}
+                            </span>
+
+                        {% endif %}
+
+                        <br><br>
+
+                        <a
+                            href="/labor/{{ labor.id }}/"
+                            class="view-profile-button"
+                        >
+                            {% tr "View Profile" %}
+                        </a>
+
+                        {% if labor.directions_url %}
+                            <a
+                                href="{{ labor.directions_url }}"
+                                class="map-directions-button"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                🧭 {% tr "Get Directions" %}
+                            </a>
+                        {% endif %}
+
+                        {% if labor.has_coordinates and GOOGLE_MAPS_API_KEY %}
+                            <button type="button" class="show-on-map map-gps-button">
+                                🗺️ {% tr "Show on map" %}
+                            </button>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="no-labor">
+
+            <h3>{% tr "No Laborers Found" %}</h3>
+
+            {% if search %}
+
+                <p>
+                    {% tr "No laborers match your search." %}
+                    {% tr "Try another name, skill or location." %}
+                </p>
+
+            {% else %}
+
+                <p>
+                    {% tr "There are currently no available laborers." %}
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/labor_map.js' %}"></script>
+{% if laborers and GOOGLE_MAPS_API_KEY %}
+    {% include "partials/maps_loader.html" with callback="initLaborMap" %}
+{% endif %}
+{% endblock %}

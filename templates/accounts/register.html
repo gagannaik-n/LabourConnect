@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Create Account - LaborConnect
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-header">
+            <h2>Create Account</h2>
+            <p>Join LaborConnect and get started.</p>
+        </div>
+
+        {% if error %}
+            <div class="auth-error">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <label for="username">
+                Username
+            </label>
+
+            <input
+                type="text"
+                name="username"
+                id="username"
+                placeholder="Enter your username"
+                required
+            >
+
+            <label for="email">
+                Email
+            </label>
+
+            <input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Enter your email"
+                required
+            >
+
+            <label for="phone">
+                Phone Number
+            </label>
+
+            <input
+                type="text"
+                name="phone"
+                id="phone"
+                placeholder="Enter your phone number"
+                required
+            >
+
+            <label for="role">
+                Account Type
+            </label>
+
+            <select
+                name="role"
+                id="role"
+                required
+            >
+                <option value="">
+                    Select Account Type
+                </option>
+
+                <option value="CUSTOMER">
+                    Customer
+                </option>
+
+                <option value="LABOR">
+                    Labor
+                </option>
+            </select>
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Enter your password"
+                required
+            >
+
+            <label for="confirm_password">
+                Confirm Password
+            </label>
+
+            <input
+                type="password"
+                name="confirm_password"
+                id="confirm_password"
+                placeholder="Confirm your password"
+                required
+            >
+
+            <button
+                type="submit"
+                class="auth-button"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+        <div class="auth-footer">
+
+            <p>
+                Already have an account?
+                <a href="/accounts/login/">
+                    Login
+                </a>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

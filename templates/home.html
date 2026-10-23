@@ -1,0 +1,196 @@
+
+{% extends 'base.html' %}
+{% load translate_text %}
+
+{% block title %}LaborConnect{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+
+    <h2>{% tr "Find Skilled Laborers Easily" %}</h2>
+
+    <p>
+        {% tr "LaborConnect helps you find trusted skilled workers, compare services and book the right laborer for your work." %}
+    </p>
+
+    {% if user.is_authenticated %}
+
+        <p>
+            {% tr "Welcome," %}
+            <strong>{{ user.username }}</strong>!
+        </p>
+
+        {% if user.role == 'LABOR' %}
+
+            <a href="/labor/dashboard/" class="primary-button">
+                {% tr "Go to Labor Dashboard" %}
+            </a>
+
+            <a href="/bookings/labor-bookings/" class="secondary-button">
+                {% tr "View Customer Bookings" %}
+            </a>
+
+        {% elif user.role == 'CUSTOMER' %}
+
+            <a href="/labor/list/" class="primary-button">
+                {% tr "Find Laborers" %}
+            </a>
+
+            <a href="/customer/dashboard/" class="secondary-button">
+                {% tr "Customer Dashboard" %}
+            </a>
+
+        {% endif %}
+
+    {% else %}
+
+        <a href="/labor/list/" class="primary-button">
+            {% tr "Find Laborers" %}
+        </a>
+
+        <a href="/accounts/register/"
+           class="secondary-button"
+           style="display:inline-flex;
+                  align-items:center;
+                  justify-content:center;
+                  box-sizing:border-box;
+                  min-width:190px;
+                  min-height:54px;
+                  padding:14px 24px;
+                  margin:8px;
+                  background-color:#ffffff;
+                  color:#2563eb !important;
+                  border:1px solid #2563eb;
+                  border-radius:9px;
+                  text-decoration:none !important;
+                  font-size:16px;
+                  font-weight:700;
+                  line-height:1.4;
+                  white-space:nowrap;
+                  opacity:1;
+                  visibility:visible;">
+            <span style="color:#2563eb !important;">
+                {% tr "Create Account" %}
+            </span>
+        </a>
+
+    {% endif %}
+
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="features-section">
+
+    <h2>{% tr "Why Choose LaborConnect?" %}</h2>
+
+    <div class="feature-grid">
+
+        <div class="feature-card">
+            <h3>👷 {% tr "Skilled Laborers" %}</h3>
+            <p>
+                {% tr "Find skilled professionals for electrical, plumbing, repair and other services." %}
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🔎 {% tr "Easy Search" %}</h3>
+            <p>
+                {% tr "Search laborers by name, skill or location and find the right professional quickly." %}
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <h3>📅 {% tr "Easy Booking" %}</h3>
+            <p>
+                {% tr "Select a service, choose a date and time, and book your preferred laborer." %}
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <h3>⭐ {% tr "Customer Reviews" %}</h3>
+            <p>
+                {% tr "Check ratings and reviews from previous customers before booking." %}
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+
+    <h2>{% tr "How LaborConnect Works" %}</h2>
+
+    <div class="steps-grid">
+
+        <div class="step-card">
+            <span>1</span>
+            <h3>{% tr "Search" %}</h3>
+            <p>{% tr "Search for laborers based on skills and location." %}</p>
+        </div>
+
+        <div class="step-card">
+            <span>2</span>
+            <h3>{% tr "Choose" %}</h3>
+            <p>{% tr "View profiles, services, prices and customer ratings." %}</p>
+        </div>
+
+        <div class="step-card">
+            <span>3</span>
+            <h3>{% tr "Book" %}</h3>
+            <p>{% tr "Select a service and book the laborer for your preferred schedule." %}</p>
+        </div>
+
+        <div class="step-card">
+            <span>4</span>
+            <h3>{% tr "Review" %}</h3>
+            <p>{% tr "After completing the work, share your experience and rating." %}</p>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- POPULAR SERVICES -->
+<section class="services-section">
+
+    <h2>{% tr "Popular Services" %}</h2>
+
+    <div class="service-grid">
+
+        <div class="service-box">
+            <h3>⚡ {% tr "Electrical" %}</h3>
+            <p>{% tr "Wiring, switches, fans and electrical repairs." %}</p>
+        </div>
+
+        <div class="service-box">
+            <h3>🔧 {% tr "Plumbing" %}</h3>
+            <p>{% tr "Plumbing installation, repair and maintenance." %}</p>
+        </div>
+
+        <div class="service-box">
+            <h3>🏠 {% tr "Home Services" %}</h3>
+            <p>{% tr "Find skilled workers for your home requirements." %}</p>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- CALL TO ACTION -->
+<section class="cta-section">
+
+    <h2>{% tr "Need a Skilled Laborer?" %}</h2>
+
+    <p>{% tr "Find the right professional for your work today." %}</p>
+
+    <a href="/labor/list/" class="primary-button">
+        {% tr "Find Laborers" %}
+    </a>
+
+</section>
+
+{% endblock %}

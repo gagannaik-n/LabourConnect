@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}
+My Customer Profile - LaborConnect
+{% endblock %}
+
+{% block content %}
+
+<div class="customer-profile-page">
+
+    <div class="page-heading">
+        <h2>My Customer Profile</h2>
+        <p>View your LaborConnect profile information.</p>
+    </div>
+
+    <div class="customer-profile-card">
+
+        <div class="customer-profile-header">
+
+            {% if profile.profile_photo %}
+
+                <img
+                    src="{{ profile.profile_photo.url }}"
+                    alt="{{ profile.full_name }}"
+                    class="customer-profile-photo"
+                >
+
+            {% else %}
+
+                <div class="customer-default-profile">
+                    👤
+                </div>
+
+            {% endif %}
+
+            <div>
+                <h3>{{ profile.full_name }}</h3>
+                <p>Customer</p>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <div class="customer-info-grid">
+
+            <div class="customer-info-box">
+                <strong>Full Name</strong>
+                <p>{{ profile.full_name }}</p>
+            </div>
+
+            <div class="customer-info-box">
+                <strong>Location</strong>
+                <p>{{ profile.location }}</p>
+            </div>
+
+            {% if profile.phone %}
+                <div class="customer-info-box">
+                    <strong>Phone</strong>
+                    <p>{{ profile.phone }}</p>
+                </div>
+            {% endif %}
+
+            {% if user.email %}
+                <div class="customer-info-box">
+                    <strong>Email</strong>
+                    <p>{{ user.email }}</p>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <div class="customer-profile-actions">
+
+        <a
+            href="/customer/dashboard/"
+            class="primary-button"
+        >
+            Customer Dashboard
+        </a>
+
+        <a
+            href="/bookings/my-bookings/"
+            class="secondary-button"
+        >
+            My Bookings
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,171 @@
+
+{% load static translate_text %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3">
+
+    <title>{% block title %}LaborConnect{% endblock %}</title>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="site-header-inner">
+
+            <!-- Logo -->
+            <a href="/" class="site-brand"
+               style="display:inline-flex; align-items:center; gap:10px; color:#ffffff !important; text-decoration:none !important; font-size:24px; font-weight:800;">
+
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:10px; background:#2563eb; color:#ffffff; font-size:22px;">
+                    L
+                </span>
+
+                <span style="color:#ffffff !important; text-decoration:none !important;">
+                    LaborConnect
+                </span>
+            </a>
+
+            <!-- Navigation -->
+            <nav class="site-nav">
+
+                <a href="/">{% tr "Home" %}</a>
+                <a href="/labor/list/">{% tr "Find Laborers" %}</a>
+
+                <!-- Language Switcher -->
+                <form method="post"
+                      action="{% url 'set_language' %}"
+                      class="language-switcher">
+
+                    {% csrf_token %}
+
+                    <input type="hidden"
+                           name="next"
+                           value="{{ request.get_full_path }}">
+
+                    <select name="language"
+                            onchange="this.form.submit()"
+                            aria-label="Choose language">
+
+                        <option value="en"
+                            {% if LANGUAGE_CODE == 'en' or LANGUAGE_CODE == 'en-us' %}selected{% endif %}>
+                            English
+                        </option>
+
+                        <option value="kn"
+                            {% if LANGUAGE_CODE == 'kn' %}selected{% endif %}>
+                            ಕನ್ನಡ
+                        </option>
+
+                    </select>
+                </form>
+
+                {% if user.is_authenticated %}
+
+                    {% if user.role == 'LABOR' %}
+
+                        <a href="/labor/dashboard/">
+                            {% tr "Dashboard" %}
+                        </a>
+
+                        <a href="/labor/my-profile/">
+                            {% tr "My Profile" %}
+                        </a>
+
+                        <a href="/services/create/">
+                            {% tr "Add Service" %}
+                        </a>
+
+                        <a href="/services/list/">
+                            {% tr "Manage Services" %}
+                        </a>
+
+                        <a href="/bookings/labor-bookings/">
+                            {% tr "Customer Bookings" %}
+                        </a>
+
+                    {% elif user.role == 'CUSTOMER' %}
+
+                        <a href="/customer/dashboard/">
+                            {% tr "Dashboard" %}
+                        </a>
+
+                        <a href="/customer/my-profile/">
+                            {% tr "My Profile" %}
+                        </a>
+
+                        <a href="/bookings/my-bookings/">
+                            {% tr "My Bookings" %}
+                        </a>
+
+                    {% endif %}
+
+                    <!-- Logout -->
+                    <form method="POST"
+                          action="/accounts/logout/"
+                          class="logout-form">
+
+                        {% csrf_token %}
+
+                        <button type="submit"
+                                class="nav-logout"
+                                style="background:transparent !important;
+                                       background-color:transparent !important;
+                                       color:white !important;
+                                       border:none !important;
+                                       box-shadow:none !important;
+                                       padding:10px 14px;
+                                       margin-bottom: 13px;
+                                       font-size: 17px;
+                                       cursor:pointer;">
+
+                            {% tr "Logout" %}
+
+                        </button>
+                    </form>
+
+                {% else %}
+
+                    <a href="/accounts/login/">
+                        {% tr "Login" %}
+                    </a>
+
+                    <a href="/accounts/register/" class="nav-register">
+                        {% tr "Register" %}
+                    </a>
+
+                {% endif %}
+
+                <a href="/admin/" class="nav-admin">
+                    {% tr "Admin" %}
+                </a>
+
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="site-main">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>
+            {% tr "© 2026 LaborConnect. All Rights Reserved." %}
+        </p>
+
+        <p>
+            {% tr "Connecting people with skilled local workers." %}
+        </p>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

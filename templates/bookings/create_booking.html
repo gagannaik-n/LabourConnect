@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load translate_text %}
+
+{% block title %}
+Book Labor - LaborConnect
+{% endblock %}
+
+{% block content %}
+
+<div class="booking-page">
+
+    <div class="booking-header">
+        <h2>Book a Laborer</h2>
+        <p>
+            Schedule a service with your selected laborer.
+        </p>
+    </div>
+
+    <div class="booking-card">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            {% include "partials/location_picker.html" with kind="booking" %}
+
+            <button type="submit" class="confirm-booking-button">
+                Confirm Booking
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="booking-back">
+
+        <a href="/labor/list/" class="back-button">
+            ← Back to Laborers
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{% include "partials/location_picker_js.html" %}
+{% endblock %}

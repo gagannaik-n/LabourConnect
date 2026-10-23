@@ -1,0 +1,367 @@
+{% extends 'base.html' %}
+{% load translate_text %}
+
+{% block title %}
+{{ labor.full_name }} - LaborConnect
+{% endblock %}
+
+{% block content %}
+
+<div class="labor-profile-page">
+
+    <!-- PROFILE HEADER -->
+
+    <div class="profile-header">
+
+        <div class="profile-photo">
+
+            {% if labor.profile_photo %}
+
+                <img
+                    src="{{ labor.profile_photo.url }}"
+                    alt="{{ labor.full_name }}"
+                >
+
+            {% else %}
+
+                <div class="large-default-profile">
+                    👤
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <div class="profile-header-info">
+
+            <h2>{{ labor.full_name }}</h2>
+
+            <p class="profile-location">
+                📍 {{ labor.location }}
+            </p>
+
+            <p class="profile-rating">
+
+                {% if average_rating %}
+
+                    ⭐
+                    {{ average_rating|floatformat:1 }}/5
+
+                    <span>
+                        ({{ review_count }} reviews)
+                    </span>
+
+                {% else %}
+
+                    No reviews yet
+
+                {% endif %}
+
+            </p>
+
+            {% if labor.is_available %}
+
+                <span class="available-badge">
+                    Available
+                </span>
+
+            {% else %}
+
+                <span class="unavailable-badge">
+                    Not Available
+                </span>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ABOUT -->
+
+    <div class="profile-section">
+
+        <h3>About the Laborer</h3>
+
+        <p>
+            {{ labor.description }}
+        </p>
+
+    </div>
+
+
+    <!-- INFORMATION -->
+
+    <div class="profile-section">
+
+        <h3>Professional Information</h3>
+
+        <div class="profile-info-grid">
+
+            <div class="info-box">
+                <strong>Skills</strong>
+                <p>{{ labor.skills }}</p>
+            </div>
+
+            <div class="info-box">
+                <strong>Experience</strong>
+                <p>{{ labor.experience_years }} years</p>
+            </div>
+
+            <div class="info-box">
+                <strong>Location</strong>
+                <p>{{ labor.location }}</p>
+            </div>
+
+            <div class="info-box">
+                <strong>Hourly Rate</strong>
+                <p>₹{{ labor.hourly_rate }}</p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- LOCATION MAP -->
+
+    <div class="profile-section">
+
+        <h3>📍 {% tr "Location on Map" %}</h3>
+
+        {% if map_markers %}
+
+            {% if GOOGLE_MAPS_API_KEY %}
+                <div id="view-map" class="map-box"></div>
+                {{ map_markers|json_script:"map-markers" }}
+            {% else %}
+                <p class="map-hint">
+                    {% tr "Google Maps is not set up yet. Add GOOGLE_MAPS_API_KEY in settings." %}
+                </p>
+            {% endif %}
+
+        {% else %}
+
+            <p class="map-hint">
+                {% tr "This laborer has not pinned a map location yet." %}
+            </p>
+
+        {% endif %}
+
+        {% if labor.directions_url %}
+            <a href="{{ labor.directions_url }}"
+               class="map-directions-button"
+               target="_blank"
+               rel="noopener">
+                🧭 {% tr "Get Directions" %}
+            </a>
+        {% endif %}
+
+    </div>
+
+
+    <!-- SERVICES -->
+
+    <div class="profile-section">
+
+        <h3>Services Offered</h3>
+
+        {% if labor.services.all %}
+
+            <div class="profile-service-grid">
+
+                {% for service in labor.services.all %}
+
+                    <div class="profile-service-card">
+
+                        <h4>
+                            {{ service.name }}
+                        </h4>
+
+                        {% if service.description %}
+
+                            <p>
+                                {{ service.description }}
+                            </p>
+
+                        {% endif %}
+
+                        <p class="service-price">
+                            ₹{{ service.price }}
+                        </p>
+
+                        {% if service.is_available %}
+
+                            <span class="available-badge">
+                                Available
+                            </span>
+
+                        {% else %}
+
+                            <span class="unavailable-badge">
+                                Not Available
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                {% empty %}
+
+                    <p>
+                        No services listed.
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <p>
+                No services listed.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- REVIEWS -->
+
+    <div class="profile-section">
+
+        <h3>Customer Reviews</h3>
+
+        <div class="review-summary">
+
+            <strong>
+                {% if average_rating %}
+                    ⭐ {{ average_rating|floatformat:1 }}/5
+                {% else %}
+                    No ratings yet
+                {% endif %}
+            </strong>
+
+            <span>
+                {{ review_count }} reviews
+            </span>
+
+        </div>
+
+        <hr>
+
+        {% if reviews %}
+
+            {% for review in reviews %}
+
+                <div class="review-card">
+
+                    <h4>
+                        {{ review.customer.username }}
+                    </h4>
+
+                    <p>
+                        <strong>Rating:</strong>
+                        ⭐ {{ review.rating }}/5
+                    </p>
+
+                    {% if review.comment %}
+
+                        <p>
+                            {{ review.comment }}
+                        </p>
+
+                    {% else %}
+
+                        <p>
+                            No comment provided.
+                        </p>
+
+                    {% endif %}
+
+                    <small>
+                        Reviewed on {{ review.created_at }}
+                    </small>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>
+                No reviews yet.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="profile-actions">
+
+        {% if labor.is_available %}
+
+            {% if user.is_authenticated and user.role == 'CUSTOMER' %}
+
+                <a
+                    href="/bookings/create/?labor={{ labor.id }}"
+                    class="book-button"
+                >
+                    Book This Labor
+                </a>
+
+            {% elif not user.is_authenticated %}
+
+                <a
+                    href="/accounts/login/"
+                    class="book-button"
+                >
+                    Login to Book
+                </a>
+
+            {% endif %}
+
+        {% else %}
+
+            <p>
+                <strong>
+                    This laborer is currently unavailable.
+                </strong>
+            </p>
+
+        {% endif %}
+
+        {% if user.is_authenticated and user == labor.user %}
+
+            <a
+                href="/labor/edit-profile/"
+                class="book-button"
+            >
+                ✏️ {% tr "Edit Profile and Location" %}
+            </a>
+
+        {% endif %}
+
+        <a
+            href="/labor/list/"
+            class="back-button"
+        >
+            ← Back to Laborers
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{% if map_markers and GOOGLE_MAPS_API_KEY %}
+    {% include "partials/view_map_js.html" %}
+{% endif %}
+{% endblock %}
