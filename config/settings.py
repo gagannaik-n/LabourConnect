@@ -80,7 +80,7 @@ else:
             'ENGINE': 'django.db.backends.mysql',
             'NAME': os.environ.get('DB_NAME', 'laborconnect_db'),
             'USER': os.environ.get('DB_USER', 'root'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'Gagan@123'),
             'HOST': os.environ.get('DB_HOST', 'localhost'),
             'PORT': os.environ.get('DB_PORT', '3306'),
         }
@@ -131,7 +131,8 @@ MAILERS = {
     },
 }
 
-GOOGLE_MAPS_API_KEY = "AIzaSyAtceFvtUHyfe37sg5ueqA1dXV_NOCFmfw"
+
+GOOGLE_MAPS_API_KEY = os.environ.get("AIzaSyAtceFvtUHyfe37sg5ueqA1dXV_NOCFmfw", "")
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
