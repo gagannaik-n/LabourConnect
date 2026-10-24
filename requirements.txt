@@ -5,3 +5,5 @@ dj-database-url
 psycopg[binary]
 mysqlclient; sys_platform != "linux"
 Pillow
+cloudinary
+django-cloudinary-storage
